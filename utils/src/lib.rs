@@ -2,7 +2,8 @@ pub mod input {
     use std::fs;
 
     pub fn read_file(file: &str) -> String {
-        fs::read_to_string(file).expect("Could not read file")
+        let s = fs::read_to_string(file).expect("Could not read file");
+        s.trim().to_string()
     }
 }
 
