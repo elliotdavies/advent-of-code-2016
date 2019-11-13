@@ -8,26 +8,85 @@ pub mod input {
 }
 
 pub mod tdd {
-    use std::fmt::Display;
+    use std::fmt::Debug;
 
-    pub fn test<F, I, O>(f: F, inputs: &[(I, O)]) where
+    pub fn test<F, I, O>(f: F, inputs: &[(I, O)])
+    where
         F: Fn(&I) -> O,
-        I: Display,
-        O: Display
+        I: Debug,
+        O: Debug,
     {
         println!("Running tests:");
         for input in inputs {
             let (i, o) = &input;
-            println!("{0} == {1}", f(i), o)
+            println!("{:0?} == {:1?}", f(i), o)
         }
     }
 
-    pub fn run<F, I, O>(f: F, input: &I) where
+    pub fn run<F, I, O>(f: F, input: &I)
+    where
         F: FnOnce(&I) -> O,
-        I: Display,
-        O: Display
+        I: Debug,
+        O: Debug,
     {
         println!("Running input:");
-        println!("{0}", f(input))
+        println!("{:0?}", f(input))
+    }
+}
+
+pub mod coords {
+    pub type Coords = (i32, i32);
+
+    pub enum Direction {
+        N,
+        E,
+        S,
+        W,
+    }
+
+    pub fn turn(dir: &Direction, s: &str) -> Direction {
+        match dir {
+            Direction::N => {
+                if s == "L" {
+                    Direction::W
+                } else {
+                    Direction::E
+                }
+            }
+            Direction::E => {
+                if s == "L" {
+                    Direction::N
+                } else {
+                    Direction::S
+                }
+            }
+            Direction::S => {
+                if s == "L" {
+                    Direction::E
+                } else {
+                    Direction::W
+                }
+            }
+            Direction::W => {
+                if s == "L" {
+                    Direction::S
+                } else {
+                    Direction::N
+                }
+            }
+        }
+    }
+
+    pub fn step((x, y): &Coords, dir: &Direction, n: i32) -> Coords {
+        match dir {
+            Direction::N => (*x, y + n),
+            Direction::E => (x + n, *y),
+            Direction::S => (*x, y - n),
+            Direction::W => (x - n, *y),
+        }
+    }
+
+    pub fn manhattan((x, y): &Coords) -> i32 {
+        x.abs() + y.abs()
     }
 }
