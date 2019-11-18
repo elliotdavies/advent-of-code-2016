@@ -9,17 +9,20 @@ pub mod input {
 
 pub mod tdd {
     use std::fmt::Debug;
+    use colored::Colorize;
 
     pub fn test<F, I, O>(f: F, inputs: &[(I, O)])
     where
         F: Fn(&I) -> O,
         I: Debug,
-        O: Debug,
+        O: Debug + Eq,
     {
         println!("Running tests:");
         for input in inputs {
             let (i, o) = &input;
-            println!("{:0?} == {:1?}", f(i), o)
+            let res = f(i);
+            let msg = if res == *o { "pass".green() } else { "fail".red() };
+            println!("{:0?} == {:1?}: {:2}", res, o, msg)
         }
     }
 
