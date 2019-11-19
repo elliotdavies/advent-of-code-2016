@@ -1,7 +1,5 @@
 extern crate utils;
 
-use std::char;
-
 use utils::coords;
 use utils::coords::Direction;
 

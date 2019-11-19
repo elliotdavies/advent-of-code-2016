@@ -1,0 +1,20 @@
+[package]
+name = "aoc2016-problems"
+version = "0.1.0"
+authors = ["Elliot Davies <elliot.a.davies@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+utils = { path = "../utils" }
+
+[[bin]]
+name = "day01"
+path = "src/day01.rs"
+
+[[bin]]
+name = "day02"
+path = "src/day02.rs"
+
+[[bin]]
+name = "day03"
+path = "src/day03.rs"
