@@ -66,7 +66,11 @@ fn coords_to_keypad_pt2((x, y): coords::Coords) -> Option<String> {
     }
 }
 
-fn go<F>(input: &String, initial_coords: coords::Coords, coords_to_keypad: F) -> String
+fn go<F>(
+    input: &String,
+    initial_coords: coords::Coords,
+    coords_to_keypad: F,
+) -> String
 where
     F: Fn(coords::Coords) -> Option<String>,
 {

@@ -9,7 +9,8 @@ use utils::coords::Turn;
 use utils::aoc;
 
 fn main() {
-    let part1_examples = vec![("R2, L3", 5), ("R2, R2, R2", 2), ("R5, L5, R5, R3", 12)];
+    let part1_examples =
+        vec![("R2, L3", 5), ("R2, R2, R2", 2), ("R5, L5, R5, R3", 12)];
 
     let part2_examples = vec![("R8, R4, R4, R8", 4)];
 
