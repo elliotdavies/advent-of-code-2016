@@ -4,56 +4,70 @@ use std::collections::HashSet;
 
 use utils::coords;
 use utils::coords::Direction;
+use utils::coords::Turn;
 
-use utils::input;
-use utils::tdd;
+use utils::aoc;
 
 fn main() {
-    let input = input::read_file("input/part1.txt");
+    let part1_examples = vec![("R2, L3", 5), ("R2, R2, R2", 2), ("R5, L5, R5, R3", 12)];
 
-    println!("{}", "Part 1");
-    let test_inputs = [
-        (String::from("R2, L3"), 5),
-        (String::from("R2, R2, R2"), 2),
-        (String::from("R5, L5, R5, R3"), 12),
-    ];
-    tdd::test(part1, &test_inputs);
-    tdd::run(part1, &input);
+    let part2_examples = vec![("R8, R4, R4, R8", 4)];
 
-    println!("{}", "Part 2");
-    tdd::test(part2, &[(String::from("R8, R4, R4, R8"), 4)]);
-    tdd::run(part2, &input);
+    let problem = aoc::Problem::<In, Out> {
+        input_file: "input/part1.txt",
+        parser,
+        part1_examples,
+        part1,
+        part2_examples,
+        part2,
+    };
+
+    problem.run()
 }
 
-fn part1(input: &String) -> i32 {
+type In = Vec<(Turn, i32)>;
+type Out = i32;
+
+fn parser(input: &str) -> In {
     let replaced = input.replace(" ", "");
     let split = replaced.split(",");
 
-    let mut coords = (0, 0);
-    let mut dir = Direction::N;
+    let mut parsed = Vec::new();
 
     for s in split {
         let (d, n) = s.split_at(1);
-        dir = coords::turn(&dir, d);
-        coords = coords::step(&coords, &dir, n.parse().unwrap())
+        let turn = match d {
+            "L" => Turn::L,
+            _ => Turn::R,
+        };
+        parsed.push((turn, n.parse().unwrap()));
     }
+
+    parsed
+}
+
+fn part1(input: In) -> Out {
+    let mut coords = (0, 0);
+    let mut dir = Direction::N;
+
+    for (t, n) in input {
+        dir = coords::turn(&dir, &t);
+        coords = coords::step(&coords, &dir, n);
+    }
+
     coords::manhattan(&coords)
 }
 
-fn part2(input: &String) -> i32 {
-    let replaced = input.replace(" ", "");
-    let split = replaced.split(",");
-
+fn part2(input: In) -> Out {
     let mut coords = (0, 0);
     let mut dir = Direction::N;
     let mut seen = HashSet::new();
     seen.insert(coords);
 
-    'outer: for s in split {
-        let (d, n) = s.split_at(1);
-        dir = coords::turn(&dir, d);
+    'outer: for (t, n) in input {
+        dir = coords::turn(&dir, &t);
 
-        for _ in 0..(n.parse().unwrap()) {
+        for _ in 0..n {
             coords = coords::step(&coords, &dir, 1);
 
             if seen.contains(&coords) {
@@ -63,5 +77,6 @@ fn part2(input: &String) -> i32 {
             }
         }
     }
+
     coords::manhattan(&coords)
 }
