@@ -1,22 +1,27 @@
 extern crate utils;
 
-use utils::input;
-use utils::tdd;
+use utils::aoc;
 
 fn main() {
-    let input = input::read_file("input.txt");
+    let part1_examples = vec![("5 10 25", 0), ("3 10 12\n3 4 5", 2)];
 
-    let tests = [
-        (String::from("5 10 25"), 0),
-        (String::from("3 10 12\n3 4 5"), 2),
-    ];
+    let problem = aoc::Problem::<In, Out> {
+        input_file: "input.txt",
+        parser,
+        part1_examples,
+        part1,
+        part2_examples: vec![],
+        part2,
+    };
 
-    println!("{}", "Part 1");
-    tdd::test(part1, &tests);
-    tdd::run(part1, &input);
+    problem.run()
+}
 
-    println!("{}", "Part 2");
-    tdd::run(part2, &input);
+type In = Vec<(i32, i32, i32)>;
+type Out = i32;
+
+fn parser(input: &str) -> In {
+    input.lines().map(|line| parse_line(line)).collect()
 }
 
 fn parse_line(line: &str) -> (i32, i32, i32) {
@@ -31,46 +36,25 @@ fn valid(x: i32, y: i32, z: i32) -> bool {
     x + y > z && x + z > y && y + z > x
 }
 
-fn part1(input: &String) -> i32 {
-    let mut num_valid = 0;
-
-    for line in input.lines() {
-        let (x, y, z) = parse_line(line);
-        if valid(x, y, z) {
-            num_valid += 1
-        }
-    }
-
-    num_valid
+fn part1(input: In) -> Out {
+    input.iter().fold(
+        0,
+        |acc, (x, y, z)| if valid(*x, *y, *z) { acc + 1 } else { acc },
+    )
 }
 
-fn part2(input: &String) -> i32 {
-    let mut num_valid = 0;
+fn part2(input: In) -> Out {
+    let mut new_input = Vec::new();
 
-    let mut lines = input.lines();
-    loop {
-        let l1 = lines.next();
-        let l2 = lines.next();
-        let l3 = lines.next();
+    for chunk in input.chunks_exact(3) {
+        let (x1, y1, z1) = chunk[0];
+        let (x2, y2, z2) = chunk[1];
+        let (x3, y3, z3) = chunk[2];
 
-        if (l3.is_none()) {
-            break;
-        }
-
-        let (x1, y1, z1) = parse_line(l1.unwrap());
-        let (x2, y2, z2) = parse_line(l2.unwrap());
-        let (x3, y3, z3) = parse_line(l3.unwrap());
-
-        if valid(x1, x2, x3) {
-            num_valid += 1
-        }
-        if valid(y1, y2, y3) {
-            num_valid += 1
-        }
-        if valid(z1, z2, z3) {
-            num_valid += 1
-        }
+        new_input.push((x1, x2, x3));
+        new_input.push((y1, y2, y3));
+        new_input.push((z1, z2, z3));
     }
 
-    num_valid
+    part1(new_input)
 }

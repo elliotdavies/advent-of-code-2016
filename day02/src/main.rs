@@ -5,39 +5,48 @@ use std::char;
 use utils::coords;
 use utils::coords::Direction;
 
-use utils::input;
-use utils::tdd;
+use utils::aoc;
 
 fn main() {
-    let input = input::read_file("input.txt");
-
-    let test_in_1 = String::from(
-        "ULL
+    let example_input = "ULL
         RRDDD
         LURDL
-        UUUUD",
-    );
-    let test_in_2 = test_in_1.clone();
+        UUUUD";
 
-    println!("{}", "Part 1");
-    let test_out_1 = String::from("1985");
-    tdd::test(part1, &[(test_in_1, test_out_1)]);
-    tdd::run(part1, &input);
+    let problem = aoc::Problem::<In, Out> {
+        input_file: "input.txt",
+        parser,
+        part1_examples: vec![(example_input, "1985".to_string())],
+        part1,
+        part2_examples: vec![(example_input, "5DB3".to_string())],
+        part2,
+    };
 
-    println!("{}", "Part 2");
-    let test_out_2 = String::from("5DB3");
-    tdd::test(part2, &[(test_in_2, test_out_2)]);
-    tdd::run(part2, &input);
+    problem.run()
 }
 
-fn char_to_dir(c: char) -> Option<Direction> {
-    match c {
+type In = Vec<Vec<Direction>>;
+type Out = String;
+
+fn parser(input: &str) -> In {
+    let char_to_dir = |c| match c {
         'U' => Some(Direction::N),
         'R' => Some(Direction::E),
         'D' => Some(Direction::S),
         'L' => Some(Direction::W),
         _ => None,
+    };
+
+    let mut outer = Vec::new();
+    for line in input.lines() {
+        let mut inner = Vec::new();
+        let dirs = line.chars().filter_map(|c| char_to_dir(c));
+        for dir in dirs {
+            inner.push(dir);
+        }
+        outer.push(inner);
     }
+    outer
 }
 
 fn coords_to_keypad_pt1((x, y): coords::Coords) -> Option<String> {
@@ -48,6 +57,24 @@ fn coords_to_keypad_pt1((x, y): coords::Coords) -> Option<String> {
     } else {
         None
     }
+}
+
+fn part1(input: In) -> Out {
+    let mut res = String::new();
+    let mut coords = (1, 1);
+
+    for line in input {
+        for dir in line {
+            let new_coords = coords::step(&coords, &dir, 1);
+            if coords_to_keypad_pt1(new_coords).is_some() {
+                coords = new_coords;
+            }
+        }
+
+        res.push_str(&coords_to_keypad_pt1(coords).expect("").to_string())
+    }
+
+    res
 }
 
 fn coords_to_keypad_pt2((x, y): coords::Coords) -> Option<String> {
@@ -66,37 +93,20 @@ fn coords_to_keypad_pt2((x, y): coords::Coords) -> Option<String> {
     }
 }
 
-fn go<F>(
-    input: &String,
-    initial_coords: coords::Coords,
-    coords_to_keypad: F,
-) -> String
-where
-    F: Fn(coords::Coords) -> Option<String>,
-{
+fn part2(input: In) -> Out {
     let mut res = String::new();
-    let mut coords = initial_coords;
+    let mut coords = (0, 2);
 
-    for line in input.lines() {
-        let dirs = line.chars().filter_map(|c| char_to_dir(c));
-
-        for dir in dirs {
+    for line in input {
+        for dir in line {
             let new_coords = coords::step(&coords, &dir, 1);
-            if coords_to_keypad(new_coords).is_some() {
+            if coords_to_keypad_pt2(new_coords).is_some() {
                 coords = new_coords;
             }
         }
 
-        res.push_str(&coords_to_keypad(coords).expect("").to_string())
+        res.push_str(&coords_to_keypad_pt2(coords).expect("").to_string())
     }
 
     res
-}
-
-fn part1(input: &String) -> String {
-    go(input, (1, 1), coords_to_keypad_pt1)
-}
-
-fn part2(input: &String) -> String {
-    go(input, (0, 2), coords_to_keypad_pt2)
 }
