@@ -6,7 +6,7 @@ fn main() {
     let part1_examples = vec![("5 10 25", 0), ("3 10 12\n3 4 5", 2)];
 
     let problem = aoc::Problem::<In, Out> {
-        input_file: "input.txt",
+        input_file: "src/day03.txt",
         parser,
         part1_examples,
         part1,

@@ -12,7 +12,7 @@ fn main() {
         UUUUD";
 
     let problem = aoc::Problem::<In, Out> {
-        input_file: "input.txt",
+        input_file: "src/day02.txt",
         parser,
         part1_examples: vec![(example_input, "1985".to_string())],
         part1,

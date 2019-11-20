@@ -15,7 +15,7 @@ fn main() {
     let part2_examples = vec![("R8, R4, R4, R8", 4)];
 
     let problem = aoc::Problem::<In, Out> {
-        input_file: "input/part1.txt",
+        input_file: "src/day01.txt",
         parser,
         part1_examples,
         part1,

@@ -1,5 +1,5 @@
 [package]
-name = "aoc2016-utils"
+name = "utils"
 version = "0.1.0"
 authors = ["Elliot Davies <elliot.a.davies@gmail.com>"]
 edition = "2018"
